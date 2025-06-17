@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة العداء السريع - إعداد أحمد أبو الخير</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- شاشة البداية -->
+    <div id="startScreen" class="screen">
+        <div class="game-logo">
+            <h1>🏃‍♂️ العداء السريع</h1>
+            <p>لعبة مغامرات مثيرة</p>
+        </div>
+        <div class="character-selection">
+            <h3>اختر شخصيتك</h3>
+            <div class="characters">
+                <div class="character active" data-character="runner1">
+                    <div class="character-icon">🏃‍♂️</div>
+                    <span>العداء الأزرق</span>
+                </div>
+                <div class="character" data-character="runner2">
+                    <div class="character-icon">🏃‍♀️</div>
+                    <span>العداءة الوردية</span>
+                </div>
+                <div class="character locked" data-character="runner3">
+                    <div class="character-icon">🦸‍♂️</div>
+                    <span>البطل الخارق</span>
+                    <div class="lock">🔒</div>
+                </div>
+            </div>
+        </div>
+        <div class="game-stats">
+            <div class="stat">
+                <span class="stat-label">أفضل نتيجة:</span>
+                <span id="bestScore">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">العملات:</span>
+                <span id="totalCoins">0</span>
+            </div>
+        </div>
+        <div class="menu-buttons">
+            <button id="startBtn" class="btn btn-primary">ابدأ اللعب</button>
+            <button id="shopBtn" class="btn btn-secondary">المتجر</button>
+        </div>
+    </div>
+
+    <!-- شاشة اللعبة -->
+    <div id="gameScreen" class="screen hidden">
+        <div class="game-ui">
+            <div class="score-display">
+                <span>النقاط: <span id="currentScore">0</span></span>
+            </div>
+            <div class="coins-display">
+                <span>العملات: <span id="gameCoins">0</span></span>
+            </div>
+            <div class="distance-display">
+                <span>المسافة: <span id="distance">0</span>م</span>
+            </div>
+        </div>
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div class="game-controls">
+            <button id="jumpBtn" class="control-btn">⬆️ قفز</button>
+            <button id="slideBtn" class="control-btn">⬇️ انزلق</button>
+            <button id="leftBtn" class="control-btn">⬅️ يسار</button>
+            <button id="rightBtn" class="control-btn">➡️ يمين</button>
+        </div>
+    </div>
+
+    <!-- شاشة المتجر -->
+    <div id="shopScreen" class="screen hidden">
+        <div class="shop-header">
+            <h2>🛍️ المتجر</h2>
+            <div class="coins-display">
+                <span>العملات المتاحة: <span id="shopCoins">0</span></span>
+            </div>
+        </div>
+        <div class="shop-categories">
+            <button class="category-btn active" data-category="characters">الشخصيات</button>
+            <button class="category-btn" data-category="powerups">القوى الخاصة</button>
+            <button class="category-btn" data-category="themes">الخلفيات</button>
+        </div>
+        <div class="shop-items">
+            <div class="shop-category" id="characters-shop">
+                <div class="shop-item">
+                    <div class="item-icon">🦸‍♂️</div>
+                    <div class="item-info">
+                        <h4>البطل الخارق</h4>
+                        <p>شخصية قوية مع قدرات خاصة</p>
+                        <span class="price">500 عملة</span>
+                    </div>
+                    <button class="buy-btn" data-item="runner3" data-price="500">شراء</button>
+                </div>
+                <div class="shop-item">
+                    <div class="item-icon">🥷</div>
+                    <div class="item-info">
+                        <h4>النينجا السريع</h4>
+                        <p>أسرع شخصية في اللعبة</p>
+                        <span class="price">1000 عملة</span>
+                    </div>
+                    <button class="buy-btn" data-item="ninja" data-price="1000">شراء</button>
+                </div>
+            </div>
+            <div class="shop-category hidden" id="powerups-shop">
+                <div class="shop-item">
+                    <div class="item-icon">⚡</div>
+                    <div class="item-info">
+                        <h4>تسارع فائق</h4>
+                        <p>زيادة السرعة لمدة 10 ثوان</p>
+                        <span class="price">100 عملة</span>
+                    </div>
+                    <button class="buy-btn" data-item="speed_boost" data-price="100">شراء</button>
+                </div>
+                <div class="shop-item">
+                    <div class="item-icon">🛡️</div>
+                    <div class="item-info">
+                        <h4>درع الحماية</h4>
+                        <p>حماية من العوائق لمرة واحدة</p>
+                        <span class="price">150 عملة</span>
+                    </div>
+                    <button class="buy-btn" data-item="shield" data-price="150">شراء</button>
+                </div>
+            </div>
+            <div class="shop-category hidden" id="themes-shop">
+                <div class="shop-item">
+                    <div class="item-icon">🌃</div>
+                    <div class="item-info">
+                        <h4>مدينة ليلية</h4>
+                        <p>خلفية مدينة جميلة في الليل</p>
+                        <span class="price">300 عملة</span>
+                    </div>
+                    <button class="buy-btn" data-item="night_city" data-price="300">شراء</button>
+                </div>
+                <div class="shop-item">
+                    <div class="item-icon">🏖️</div>
+                    <div class="item-info">
+                        <h4>شاطئ استوائي</h4>
+                        <p>خلفية شاطئ مشمس ومريح</p>
+                        <span class="price">400 عملة</span>
+                    </div>
+                    <button class="buy-btn" data-item="beach" data-price="400">شراء</button>
+                </div>
+            </div>
+        </div>
+        <button id="backToMenuBtn" class="btn btn-secondary">العودة للقائمة</button>
+    </div>
+
+    <!-- شاشة انتهاء اللعبة -->
+    <div id="gameOverScreen" class="screen hidden">
+        <div class="game-over-content">
+            <h2>🎮 انتهت اللعبة!</h2>
+            <div class="final-stats">
+                <div class="stat">
+                    <span class="stat-label">النقاط النهائية:</span>
+                    <span id="finalScore">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">العملات المكتسبة:</span>
+                    <span id="earnedCoins">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">المسافة المقطوعة:</span>
+                    <span id="finalDistance">0</span>م
+                </div>
+            </div>
+            <div class="achievements" id="achievements">
+                <!-- سيتم إضافة الإنجازات هنا -->
+            </div>
+            <div class="game-over-buttons">
+                <button id="playAgainBtn" class="btn btn-primary">العب مرة أخرى</button>
+                <button id="mainMenuBtn" class="btn btn-secondary">القائمة الرئيسية</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- رسائل التنبيه -->
+    <div id="notification" class="notification hidden">
+        <span id="notificationText"></span>
+    </div>
+
+    <!-- شريط الخبرة -->
+    <div id="experienceBarContainer" class="experience-bar-container hidden">
+        <div id="experienceBar" class="experience-bar" style="width: 0%"></div>
+        <div class="level-indicator">
+            <span>المستوى: <span id="currentLevel">1</span></span>
+        </div>
+    </div>
+
+    <!-- عرض الكومبو -->
+    <div id="comboDisplay" class="combo-display">
+        كومبو: 0x
+    </div>
+
+    <!-- القوى النشطة -->
+    <div id="activePowerUps" class="active-powerups"></div>
+
+    <!-- المخزون -->
+    <div id="inventoryModal" class="screen hidden">
+        <div class="inventory-content">
+            <h2>🎒 المخزون</h2>
+            <div id="inventory" class="inventory">
+                <!-- سيتم إضافة العناصر هنا -->
+            </div>
+            <button id="closeInventoryBtn" class="btn btn-secondary">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- إعدادات الثيمات -->
+    <div id="themeSelector" class="theme-selector">
+        <button class="theme-btn" data-theme="default" title="الثيم الافتراضي">🌈</button>
+        <button class="theme-btn" data-theme="dark" title="الثيم المظلم">🌙</button>
+        <button class="theme-btn" data-theme="light" title="الثيم الفاتح">☀️</button>
+    </div>
+
+    <!-- زر المخزون -->
+    <button id="inventoryBtn" class="inventory-btn">🎒</button>
+
+    <script src="game.js"></script>
+</body>
+</html>
+
